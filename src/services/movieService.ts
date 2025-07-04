@@ -8,16 +8,21 @@ interface MoviesResponse {
   total_results: number;
 }
 
-const options = {
-  method: 'GET',
-  url: 'https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1',
-  params: {
-    // ваші параметри
-  },
-  headers: {
-    accept: 'application/json',
-    Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`
-  }
-};
+const BASE_URL = 'https://api.themoviedb.org/3/search/movie';
 
-export const fetchMovies = () => axios.request<MoviesResponse>(options);
+export const fetchMovies = (query: string) => {
+  return axios.request<MoviesResponse>({
+    method: 'GET',
+    url: BASE_URL,
+    params: {
+      include_adult: false,
+      language: 'en-US',
+      page: 1,
+      query,
+    },
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${import.meta.env.VITE_TMDB_TOKEN}`,
+    },
+  });
+};
