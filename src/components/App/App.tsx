@@ -6,15 +6,18 @@ import type { Movie } from '../../types/movie';
 import MovieGrid from '../MovieGrid/MovieGrid';
 import Loader from '../Loader/Loader';
 import MovieModal from '../MovieModal/MovieModal';
+import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import './App.css';
 
 function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [error, setError] = useState(false);
 
   const handleSearch = async (query: string) => {
     setMovies([]); // Очищення колекції фільмів при новому пошуку
+    setError(false);
     setLoading(true);
     try {
       const { data } = await fetchMovies(query);
@@ -25,8 +28,9 @@ function App() {
         setMovies(data.results);
       }
     } catch {
-      toast.error('Something went wrong.');
+      setError(true);
       setMovies([]);
+      toast.error('Something went wrong.');
     } finally {
       setLoading(false);
     }
@@ -41,6 +45,8 @@ function App() {
       <SearchBar onSubmit={handleSearch} />
       {loading ? (
         <Loader />
+      ) : error ? (
+        <ErrorMessage />
       ) : (
         <MovieGrid movies={movies} onSelect={handleSelect} />
       )}
